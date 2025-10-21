@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image recognition</title>
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data" action="{% url 'index_recognition' %}">
+        {% csrf_token %}
+        <p>{{ form }}</p>
+        <button type="submit">Submit</button>
+    </form>
+    {% if file_saved %}
+        <strong>Picture was saved!</strong>
+    {% endif %}
+</body>
+</html>

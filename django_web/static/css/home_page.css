@@ -1,0 +1,61 @@
+:root{
+  --link-color: #560017;
+  --link-color-hover: #001756;
+  --header-footer-bg-color: #00563f;
+  --aside-accent-color: #561400;
+  --skill-bar-fill-color: #005614;
+  --blockquote-bg-color: #f7fafc;
+  --blockquote-accent-color: #4a5568;
+  --blockquote-text-color: #4a5568;
+  --spacing-inline: 0.5rem;
+}
+
+body {
+  font-family: "Noto Sans", "Nunito", "Segoe UI", "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
+  font-weight: 400;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+ul {
+float: left;
+width: 100%;
+padding: 0;
+margin: 0;
+list-style: none;
+}
+
+li a {
+display: block;
+float: left;
+text-align: center;
+font-size: 1.2em;
+width: 130px;
+text-decoration: none;
+color: black;
+background-color: var(--header-footer-bg-color);
+padding: 10px 15px;
+margin: 0 1px 1px 0;
+border: 1px solid var(--header-footer-bg-color);
+border-radius: 3px;
+box-shadow: 0px 2px 3px gray;
+}
+
+li a:hover {
+color: var(--link-color-hover);
+background: var(--skill-bar-fill-color);
+border: 1px solid var(--header-footer-bg-color);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header,
+.page-footer {
+  background: var(--header-footer-bg-color);
+}
