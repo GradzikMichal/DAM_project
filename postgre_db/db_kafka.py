@@ -1,6 +1,7 @@
 from kafka import KafkaConsumer
 import json
 import socket
+import db_connection as con
 
 
 if __name__ == '__main__':
@@ -12,7 +13,7 @@ if __name__ == '__main__':
         enable_auto_commit=True,
         value_deserializer=lambda x: json.loads(x.decode('utf-8'))
     )
-    print("Kafka consumer started")
+
     for message in consumer:
         print("Waiting for images data...")
         image_data = message.value

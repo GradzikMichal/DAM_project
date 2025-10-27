@@ -13,16 +13,13 @@ create or replace FUNCTION add_image(
 ) RETURNS int
 LANGUAGE plpgsql
 AS $_$
-    DECLARE new_img_id integer;
+    DECLARE new_img_id int;
     begin
-    insert into images (image_name, user_id, creation_date)
-           values (img_name, u_id, now());
-    COMMIT;
-
-    select (select image_id from images
-            where creation_date=now() and user_id=u_id and image_name=img_name) into new_img_id;
-    UPDATE images set image_path=concat(folder_path, new_img_id) where image_id=new_img_id;
+    select nextval('images_image_id_seq') into new_img_id;
+    insert into images (image_id, image_name, user_id, creation_date, image_path)
+           values (new_img_id, img_name, u_id, now(), concat(folder_path, '/', new_img_id));
     return new_img_id;
-
     end;
 $_$;
+
+
