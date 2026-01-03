@@ -1,28 +1,19 @@
-from kafka import KafkaConsumer, KafkaProducer
 from kafka.admin import KafkaAdminClient, NewTopic
-from kafka.errors import KafkaError
-import socket
 
 if __name__ == "__main__":
-    kafka_ip = socket.gethostbyname("broker-1")
     admin_client = KafkaAdminClient(
-        bootstrap_servers=kafka_ip + ":29092",
+        bootstrap_servers="broker-1:9093",
         client_id='test',
-
     )
-    topic_list = []
-    #sending info about path etc to db and ml worker
-    topic_list.append(NewTopic(name="image_to_process", num_partitions=1, replication_factor=1))
+    topics_to_create = ["add_image_to_db", "image_added_to_db","image_to_recognize", "image_recognized"]
 
-    #sending id to ml worker and
-    topic_list.append(NewTopic(name="image_saved", num_partitions=1, replication_factor=1))
-    admin_client.create_topics(new_topics=topic_list, validate_only=False)
-    kafka_ip = socket.gethostbyname("broker-2")
-    admin_client = KafkaAdminClient(
-        bootstrap_servers=kafka_ip+":39092",
-        client_id='test'
-    )
     topic_list = []
-    # sending info about ml worker status
-    topic_list.append(NewTopic(name="analysis_status", num_partitions=1, replication_factor=1))
-    admin_client.create_topics(new_topics=topic_list, validate_only=False)
+    existing_topics = admin_client.list_topics()
+    for topic in topics_to_create:
+        if topic not in existing_topics:
+            topic_list.append(NewTopic(name=topic, num_partitions=1, replication_factor=1))
+    if len(topic_list) > 0:
+        admin_client.create_topics(new_topics=topic_list, validate_only=False)
+    print("Adding topics finished. Existing topics: ", admin_client.list_topics())
+
+

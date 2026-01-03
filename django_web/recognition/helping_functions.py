@@ -1,9 +1,12 @@
-from django.core.files.uploadedfile import InMemoryUploadedFile
+import io
 
+from PIL import Image
+
+from .image_class import ImageClass
 from django.conf import settings
 
 
-def handle_uploaded_pictures(uploaded_pictures: InMemoryUploadedFile, file_id: str, file_type: str):
-    with open(settings.MEDIA_ROOT + '\\' + file_id + "." + file_type, 'wb+') as destination:
-        for chunk in uploaded_pictures.chunks():
-            destination.write(chunk)
+def handle_uploaded_pictures(image: ImageClass):
+    img.frombytes(image.image_bytes)
+    print(img.tobytes())
+    img.save()

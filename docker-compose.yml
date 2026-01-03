@@ -20,27 +20,6 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
 
-#  broker-2:
-#    image: apache/kafka:3.9.1
-#    hostname: broker-2
-#    container_name: broker-2
-#    ports:
-#      - 9093:9093
-#    environment:
-#      KAFKA_BROKER_ID: 2
-#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER-2:PLAINTEXT
-#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker-2:39092,PLAINTEXT_HOST://localhost:9093
-#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-#      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-#      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-#      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-#      KAFKA_PROCESS_ROLES: broker,controller
-#      KAFKA_NODE_ID: 2
-#      KAFKA_CONTROLLER_QUORUM_VOTERS: 2@broker-2:39093
-#      KAFKA_LISTENERS: PLAINTEXT://broker-2:39092,CONTROLLER-2://broker-2:39093,PLAINTEXT_HOST://0.0.0.0:9093
-#      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-#      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER-2
-
 
   postgres-db:
     image: postgres:18
@@ -53,10 +32,7 @@ services:
     ports:
       - 5432:5432
     depends_on:
-#      - controller-1
-#      - controller-2
       - broker-1
-#      - broker-2
     volumes:
       - ./postgre_db/database_creation.sql:/docker-entrypoint-initdb.d/database_init.sql
 
@@ -64,13 +40,11 @@ services:
   db-python:
     image: python:3.12
     depends_on:
-#      - controller-1
-#      - controller-2
       - broker-1
-#      - broker-2
       - postgres-db
     volumes:
       - ./postgre_db:/python_code
+      - ./kafka_setup.py:/kafka_setup.py
     command: /bin/sh -c "/python_code/python_install.sh"
 
   django-web:
@@ -78,12 +52,16 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-#      - controller-1
-#      - controller-2
       - broker-1
-#      - broker-2
       - postgres-db
       - db-python
 
+  img_recognition:
+    image: python:3.12
+    depends_on:
+      - broker-1
+    volumes:
+      - ./image_recognition:/image_recognition
+    command: /bin/sh -c "/image_recognition/python_install.sh"
 
 
