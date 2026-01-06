@@ -21,40 +21,66 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
 
 
-  postgres-db:
+  postgres:
     image: postgres:18
+    container_name: POSTGRE
 #    restart: always
     shm_size: 256mb
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: image_db
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
     ports:
       - 5432:5432
     depends_on:
       - broker-1
     volumes:
       - ./postgre_db/database_creation.sql:/docker-entrypoint-initdb.d/database_init.sql
+    env_file:
+      - .env
 
-
-  db-python:
-    image: python:3.12
-    depends_on:
-      - broker-1
-      - postgres-db
-    volumes:
-      - ./postgre_db:/python_code
-      - ./kafka_setup.py:/kafka_setup.py
-    command: /bin/sh -c "/python_code/python_install.sh"
+#  db-python:
+#    image: python:3.12
+#    depends_on:
+#      - broker-1
+#      - postgres-db
+#    volumes:
+#      - ./postgre_db:/python_code
+#      - ./kafka_setup.py:/kafka_setup.py
+#    command: /bin/sh -c "/python_code/python_install.sh"
 
   django-web:
-    build: .
+    container_name: DJANGO
+    build:
+      context: django_web/.
+      no_cache: true
+    expose:
+      - "8000"
+    depends_on:
+      - broker-1
+      - postgres
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      DATABASE_ENGINE: ${DATABASE_ENGINE}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: ${DATABASE_PASSWORD}
+      DATABASE_PORT: ${DATABASE_PORT}
+    env_file:
+      - .env
+    volumes:
+      - static_volume:/app/staticfiles
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/app/staticfiles
     ports:
       - "8000:8000"
     depends_on:
-      - broker-1
-      - postgres-db
-      - db-python
+      - django-web
+
 
   img_recognition:
     image: python:3.12
@@ -64,4 +90,5 @@ services:
       - ./image_recognition:/image_recognition
     command: /bin/sh -c "/image_recognition/python_install.sh"
 
-
+volumes:
+  static_volume:
