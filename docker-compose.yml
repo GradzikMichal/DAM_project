@@ -38,6 +38,8 @@ services:
       - ./postgre_db/database_creation.sql:/docker-entrypoint-initdb.d/database_init.sql
     env_file:
       - .env
+    networks:
+      - database
 
 #  db-python:
 #    image: python:3.12
@@ -71,15 +73,23 @@ services:
       - .env
     volumes:
       - static_volume:/app/staticfiles
+    networks:
+      - llm_chat
+      - frontend
+      - postgre_network
+      - redis_django
 
   nginx:
     build: ./nginx
     volumes:
       - static_volume:/app/staticfiles
     ports:
-      - "8000:8000"
+      - "8080:8080"
     depends_on:
       - django-web
+      - frontend
+    networks:
+      - frontend
 
 
   img_recognition:
@@ -90,5 +100,31 @@ services:
       - ./image_recognition:/image_recognition
     command: /bin/sh -c "/image_recognition/python_install.sh"
 
+  frontend:
+    container_name: FRONTEND
+    build: frontend/.
+    expose:
+      - 5173
+    environment:
+      HOST: "0.0.0.0"
+    networks:
+      - frontend
+
+
+
 volumes:
   static_volume:
+
+networks:
+  frontend:
+    driver: bridge
+  llm_chat:
+    driver: bridge
+  ollama_network:
+    driver: bridge
+  redis_llm:
+    driver: bridge
+  postgre_network:
+    driver: bridge
+  redis_django:
+    driver: bridge
