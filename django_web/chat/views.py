@@ -4,10 +4,9 @@ import django.middleware.csrf
 from urllib.parse import unquote
 from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from redisvl.extensions.message_history import MessageHistory
-
+from ws_communication import send_message
 from django_web.chat.models import Conversation, OllamaModel
 from django_web.dam_site import settings
 

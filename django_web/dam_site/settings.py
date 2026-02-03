@@ -24,6 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 REDIS_URL = os.getenv("REDIS_URL")
+LLM_URL = "ws://"+os.getenv("LLM_URL")
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
