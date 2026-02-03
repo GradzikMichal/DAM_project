@@ -13,11 +13,12 @@
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "svelte": "^5.43.8",
     "svelte5-router": "^3.0.2",
-    "vite": "^7.2.4"
+    "vite": "^7.3.1"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/svelte-virtual": "^3.13.18",
+    "carta-md": "^4.11.1",
     "daisyui": "^5.5.14",
     "svelte-i18n": "^4.0.1",
     "tailwindcss": "^4.1.18"

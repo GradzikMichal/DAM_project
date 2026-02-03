@@ -1,4 +1,4 @@
 # Application for image recognition and generation
 
 ### Project architecture
-![architecture](project_architecture.png)
+![architecture](diagram/project_architecture.png)
